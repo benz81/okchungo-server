@@ -35,7 +35,6 @@ exports.createUser = async (req, res, next) => {
   try {
     [result] = await connection.query(query, data);
     user_id = result.insertId;
-    res.status(200).json({ success: true });
   } catch (e) {
     res.status(500).json({ error: e });
     return;
