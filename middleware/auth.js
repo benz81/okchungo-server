@@ -38,7 +38,7 @@ const auth = async (req, res, next) => {
       next();
     }
   } catch (e) {
-    res.status(500).json({ errpr: e });
+    res.status(500).json({ error: e });
     return;
   }
 };

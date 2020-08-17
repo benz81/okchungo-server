@@ -32,7 +32,7 @@ exports.createUser = async (req, res, next) => {
     [result] = await connection.query(query, data);
     user_id = result.insertId;
   } catch (e) {
-    res.status(500).json({ errpr: e });
+    res.status(500).json({ error: e });
     return;
   }
 
