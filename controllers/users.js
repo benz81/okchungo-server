@@ -12,8 +12,10 @@ const connection = require("../db/mysql_connection");
 exports.createUser = async (req, res, next) => {
   let email = req.body.email;
   let passwd = req.body.passwd;
+  let name = req.body.name;
+  let graduation = req.body.graduation;
 
-  if (!email || !passwd) {
+  if (!email || !passwd || !name || !graduation) {
     res.status(400).json();
     return;
   }
@@ -27,7 +29,7 @@ exports.createUser = async (req, res, next) => {
   let query =
     "insert into okchungo_user (email, passwd, name, graduation) values(?,?,?,?)";
   let data = [email, hashedPasswd, name, graduation];
-  console.log(data);
+
   let user_id;
   // 테이블에 인서트
   try {
