@@ -32,7 +32,7 @@ exports.createUser = async (req, res, next) => {
     [result] = await connection.query(query, data);
     user_id = result.insertId;
   } catch (e) {
-    res.status(500).json();
+    res.status(500).json({ errpr: e });
     return;
   }
 
@@ -44,7 +44,7 @@ exports.createUser = async (req, res, next) => {
   try {
     [result] = await connection.query(query, data);
   } catch (e) {
-    res.status(500).json();
+    res.status(500).json({ errpr: e });
     return;
   }
 
