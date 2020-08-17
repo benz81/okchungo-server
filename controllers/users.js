@@ -35,24 +35,26 @@ exports.createUser = async (req, res, next) => {
   try {
     [result] = await connection.query(query, data);
     user_id = result.insertId;
+    res.status(200).json({ success: true });
   } catch (e) {
     res.status(500).json({ error: e });
     return;
   }
 
   const token = jwt.sign({ user_id: user_id }, process.env.ACCESS_TOKEN_SECRET);
+  console.log("토큰" + token);
 
   query = "insert into okchungo_photo_token (user_id, token) values (?,?)";
   data = [user_id, token];
-
+  console.log("토큰저장" + data);
   try {
     [result] = await connection.query(query, data);
+    res.status(200).json({ success: true, token: token });
+    console.log("결과" + result);
   } catch (e) {
     res.status(500).json({ error: e });
     return;
   }
-
-  res.status(200).json({ success: true, token: token });
 };
 
 // @desc     로그인------------------------------------------------------------------------------------------
