@@ -23,9 +23,10 @@ exports.createUser = async (req, res, next) => {
 
   const hashedPasswd = await bcrypt.hash(passwd, 8);
 
-  let query = "insert into okchungo_user (email, passwd) values(?,?)";
-  let data = [email, hashedPasswd];
-
+  let query =
+    "insert into okchungo_user (email, passwd, name, graduation) values(?,?)";
+  let data = [email, hashedPasswd, name, graduation];
+  console.log(data);
   let user_id;
   // 테이블에 인서트
   try {
