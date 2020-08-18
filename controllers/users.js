@@ -13,10 +13,8 @@ const { json } = require("express");
 exports.createUser = async (req, res, next) => {
   let email = req.body.email;
   let passwd = req.body.passwd;
-  let name = req.body.name;
-  let graduation = req.body.graduation;
 
-  if (!email || !passwd || !name || !graduation) {
+  if (!email || !passwd) {
     res.status(400).json();
     return;
   }
@@ -27,40 +25,37 @@ exports.createUser = async (req, res, next) => {
 
   const hashedPasswd = await bcrypt.hash(passwd, 8);
 
-  let query =
-    "insert into okchungo_user (email, passwd, name, graduation) values(?,?,?,?)";
-  let data = [email, hashedPasswd, name, graduation];
+  let query = "insert into okchungo_user (email, passwd) values (?,?)";
+  let data = [email, hashedPasswd];
 
   let user_id;
 
   const conn = await connection.getConnection();
-  await conn.beginTransaction(); // 트랜젝션 시작
+  await conn.beginTransaction();
 
-  // 테이블에 인서트
+  // contact_user 테이블에 인서트.
   try {
     [result] = await conn.query(query, data);
     user_id = result.insertId;
   } catch (e) {
     await conn.rollback();
-    res.status(500).json({ error: e });
+    res.status(500).json();
     return;
   }
 
-  const token = jwt.substring(
-    { user_id: user_id },
-    process.env.ACCESS_TOKEN_SECRET
-  );
-  query = "insert into okchungo_photo_token (user_id, token) values (?,?)";
+  const token = jwt.sign({ user_id: user_id }, process.env.ACCESS_TOKEN_SECRET);
+  query = "insert into okchungo_token (user_id, token) values (?,?)";
   data = [user_id, token];
-  console.log("토큰저장" + data);
+
   try {
     [result] = await conn.query(query, data);
   } catch (e) {
     await conn.rollback();
-    res.status(500).json({ error: e });
+    res.status(500).json();
     return;
   }
-  await conn.commit(); // 트랜젝션 끝
+
+  await conn.commit();
   await conn.release();
   res.status(200).json({ success: true, token: token });
 };
