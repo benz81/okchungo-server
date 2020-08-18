@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 
 const connection = require("../db/mysql_connection");
-const { json } = require("express");
 
 // @desc        회원가입 ------------------------------------------------------------------------
 // @route       POST /api/v1/users
@@ -15,6 +14,10 @@ exports.createUser = async (req, res, next) => {
   let passwd = req.body.passwd;
   let name = req.body.name;
   let graduation = req.body.graduation;
+  console.log("email" + email);
+  console.log("passwd" + passwd);
+  console.log("name" + name);
+  console.log("graduation" + graduation);
 
   if (!email || !passwd || !name || !graduation) {
     res.status(400).json();
@@ -30,6 +33,7 @@ exports.createUser = async (req, res, next) => {
   let query =
     "insert into okchungo_user (email, passwd, name, graduation) values (?,?,?,?)";
   let data = [email, hashedPasswd, name, graduation];
+  console.log("data" + data);
   let user_id;
 
   const conn = await connection.getConnection();
@@ -39,6 +43,7 @@ exports.createUser = async (req, res, next) => {
   try {
     [result] = await conn.query(query, data);
     user_id = result.insertId;
+    console.log("result" + result);
   } catch (e) {
     await conn.rollback();
     res.status(500).json({ errer: e });
@@ -46,8 +51,10 @@ exports.createUser = async (req, res, next) => {
   }
 
   const token = jwt.sign({ user_id: user_id }, process.env.ACCESS_TOKEN_SECRET);
+  console.log("token " + token);
   query = "insert into okchungo_photo_token (user_id, token) values (?,?)";
   data = [user_id, token];
+  console.log("token data" + data);
 
   try {
     [result] = await conn.query(query, data);
