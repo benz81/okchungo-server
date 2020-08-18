@@ -13,8 +13,10 @@ const { json } = require("express");
 exports.createUser = async (req, res, next) => {
   let email = req.body.email;
   let passwd = req.body.passwd;
+  let name = req.body.name;
+  let graduation = req.body.graduation;
 
-  if (!email || !passwd) {
+  if (!email || !passwd || !name || !graduation) {
     res.status(400).json();
     return;
   }
@@ -25,9 +27,9 @@ exports.createUser = async (req, res, next) => {
 
   const hashedPasswd = await bcrypt.hash(passwd, 8);
 
-  let query = "insert into okchungo_user (email, passwd) values (?,?)";
-  let data = [email, hashedPasswd];
-
+  let query =
+    "insert into okchungo_user (email, passwd, name, graduation) values (?,?,?,?)";
+  let data = [email, hashedPasswd, name, graduation];
   let user_id;
 
   const conn = await connection.getConnection();
@@ -39,19 +41,19 @@ exports.createUser = async (req, res, next) => {
     user_id = result.insertId;
   } catch (e) {
     await conn.rollback();
-    res.status(500).json();
+    res.status(500).json({ errer: e });
     return;
   }
 
   const token = jwt.sign({ user_id: user_id }, process.env.ACCESS_TOKEN_SECRET);
-  query = "insert into okchungo_token (user_id, token) values (?,?)";
+  query = "insert into okchungo_photo_token (user_id, token) values (?,?)";
   data = [user_id, token];
 
   try {
     [result] = await conn.query(query, data);
   } catch (e) {
     await conn.rollback();
-    res.status(500).json();
+    res.status(500).json({ errer: e });
     return;
   }
 
