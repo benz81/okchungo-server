@@ -34,7 +34,8 @@ exports.createUser = async (req, res, next) => {
   let user_id;
 
   const conn = await connection.getConnection();
-  await conn.beginTransaction();
+  await conn.beginTransaction(); // 트랜젝션 시작
+
   // 테이블에 인서트
   try {
     [result] = await conn.query(query, data);
@@ -45,7 +46,10 @@ exports.createUser = async (req, res, next) => {
     return;
   }
 
-  const token = jwt.sign({ user_id: user_id }, process.env.ACCESS_TOKEN_SECRET);
+  const token = jwt.substring(
+    { user_id: user_id },
+    process.env.ACCESS_TOKEN_SECRET
+  );
   query = "insert into okchungo_photo_token (user_id, token) values (?,?)";
   data = [user_id, token];
   console.log("토큰저장" + data);
@@ -56,7 +60,7 @@ exports.createUser = async (req, res, next) => {
     res.status(500).json({ error: e });
     return;
   }
-  await conn.commit();
+  await conn.commit(); // 트랜젝션 끝
   await conn.release();
   res.status(200).json({ success: true, token: token });
 };
