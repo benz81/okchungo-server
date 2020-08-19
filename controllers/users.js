@@ -52,7 +52,7 @@ exports.createUser = async (req, res, next) => {
 
   const token = jwt.sign({ user_id: user_id }, process.env.ACCESS_TOKEN_SECRET);
   console.log("token " + token);
-  query = "insert into okchungo_photo_token (user_id, token) values (?,?)";
+  query = "insert into okchungo_token (user_id, token) values (?,?)";
   data = [user_id, token];
   console.log("token data" + data);
 
@@ -96,7 +96,7 @@ exports.loginUser = async (req, res, next) => {
     return;
   }
   const token = jwt.sign({ user_id: user_id }, process.env.ACCESS_TOKEN_SECRET);
-  query = "insert into okchungo_photo_token (user_id, token) values (?,?)";
+  query = "insert into okchungo_token (user_id, token) values (?,?)";
   data = [user_id, token];
   try {
     [result] = await connection.query(query, data);
