@@ -7,7 +7,8 @@ const auth = async (req, res, next) => {
     token = req.header("Authorization");
     token = token.replace("Bearer ", "");
   } catch (e) {
-    res.status(401).json();
+    console.log("errno : 1" + e);
+    res.status(401).json({ errno: 1, error: e });
     return;
   }
 
@@ -16,7 +17,8 @@ const auth = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     user_id = decoded.user_id;
   } catch (e) {
-    res.status(401).json();
+    console.log("errno : 2" + e);
+    res.status(401).json({ errno: 2, error: e });
     return;
   }
 
@@ -31,7 +33,8 @@ const auth = async (req, res, next) => {
   try {
     [rows] = await connection.query(query, data);
     if (rows.length == 0) {
-      res.status(401).json();
+      console.log("errno : 3" + e);
+      res.status(401).json({ errno: 3, error: e });
       return;
     } else {
       req.user = rows[0];
