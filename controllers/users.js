@@ -39,11 +39,11 @@ exports.createUser = async (req, res, next) => {
   const conn = await connection.getConnection();
   await conn.beginTransaction();
 
-  // contact_user 테이블에 인서트.
+  // okchungo_user 테이블에 인서트.
   try {
     [result] = await conn.query(query, data);
     user_id = result.insertId;
-    console.log("result" + result);
+    console.log("테이블에 result 인서트" + result);
   } catch (e) {
     await conn.rollback();
     res.status(500).json({ errer: e });
@@ -51,10 +51,12 @@ exports.createUser = async (req, res, next) => {
   }
 
   const token = jwt.sign({ user_id: user_id }, process.env.ACCESS_TOKEN_SECRET);
-  console.log("token " + token);
+  console.log("암호외 토큰 가져온다 " + token);
   query = "insert into okchungo_token (user_id, token) values (?,?)";
   data = [user_id, token];
-  console.log("token data" + data);
+  console.log(
+    "암호와 토큰을 받아서" + "유저 아이디" + user_id + "암호 토큰" + data
+  );
 
   try {
     [result] = await conn.query(query, data);
@@ -101,6 +103,25 @@ exports.loginUser = async (req, res, next) => {
   try {
     [result] = await connection.query(query, data);
     res.status(200).json({ success: true, token: token });
+  } catch (e) {
+    res.status(500).json();
+  }
+};
+// @desc        로그아웃 (기기1대 로그아웃)--------------------------------------------------------------
+// @route       POST /api/v1/users/logout
+// @request     token(header), user_id(auth)
+// @response    success
+
+exports.logout = async (req, res, next) => {
+  let user_id = req.user.id;
+  let token = req.user.token;
+
+  let query = "delete from okchungo_token where user_id = ? and token = ?";
+  let data = [user_id, token];
+
+  try {
+    [result] = await connection.query(query, data);
+    res.status(200).json({ success: true });
   } catch (e) {
     res.status(500).json();
   }

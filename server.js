@@ -7,7 +7,7 @@ const path = require("path");
 // 미들 웨어 로드 찍어주는 로거 app.use에 추가 하는것
 const morgan = require("morgan");
 
-// 우리가 파ㅣㄹ로 만든것은 항상 npm  패키지 아래쪽에 만들어준다.
+// 우리가 파일로 만든것은 항상 npm  패키지 아래쪽에 만들어준다.
 const users = require("./routes/users");
 
 const app = express();
