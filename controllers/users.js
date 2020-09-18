@@ -10,7 +10,7 @@ const connection = require("../db/mysql_connection");
 
 // @desc        회원가입 ------------------------------------------------------------------회원가입---------------------------------------
 // @route       POST /api/v1/users
-// @request     email, passwd
+// @request     email, passwd,name,graduation
 // @response    success, token
 exports.createUser = async (req, res, next) => {
   let email = req.body.email;
@@ -149,7 +149,7 @@ exports.logoutAll = async (req, res, next) => {
   }
 };
 
-// @desc  내 정보 (회원정보 )가져오는 API -----------------------------------------------------------------------내정보 가져오기----------------------------------
+// @desc  내 정보 가져오는 API -----------------------------------------------------------------------내정보 가져오기----------------------------------
 // @url   GET /apt/v1/users/me
 // @request
 // @response  id, email, created_at
@@ -352,7 +352,6 @@ exports.resetPasswd = async (req, res, next) => {
 
 // 회원탈퇴 : db에서 해당 회원의 유저 테이블 정보 삭제 ------------------------------------------------------회원탈퇴-----------------------------------------
 // => 유저 정보가 있는 다른 테이블도 정보 삭제.
-
 // @desc  회원탈퇴 :  유저 테이블에서 삭제, 토큰 테이블에서 삭제
 // @route DELETE  /api/v1/users
 
