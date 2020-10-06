@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const ErrorResponse = require("../utils/errorResponse.js");
 const chalk = require("chalk");
-const sendEmail = require("../utils/sendemail.js");
+const sendEmaril = require("../utils/sendemail.js");
 
 const connection = require("../db/mysql_connection");
 
